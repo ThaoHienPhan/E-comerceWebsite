@@ -1,0 +1,82 @@
+{% extends 'main.html' %} {% load static %} {% block content %}
+<!-- cart items details -->
+{% if orderItem_set == 0 %}
+  <h2>không có sản phẩm nào trong giỏ hàng</h2>
+  
+{% else %}
+<div class="small-container cart-page">
+  <table>
+    <tr>
+      <th>Product</th>
+      <th>Quantity</th>
+      <th>Price</th>
+    </tr>
+    {% for item in orderItem_set %}
+    <tr>
+      <td>
+        <div class="cart-info">
+          <img src="{% static 'images/product-img/' %}{{item.image}}" />
+          <div>
+            <p>{{item.name}}</p>
+            <small>Price: {{item.price}} VND</small>
+            <br />
+            <form action="" method="POST">
+              {% csrf_token %}
+              <input type="hidden" name="action" value='delete'>
+              <button type="submit">X</button>
+              <input name="id" type="hidden" value="{{item.id}}" />
+            </form>
+            
+          </div>
+        </div>
+      </td>
+      <td>
+        <form action="" method="POST">
+          {% csrf_token %}
+          <input name="id" type="hidden" value="{{item.id}}" />
+          <input type="hidden" name="action" value='update'>
+          <input type="number" name='count' value="{{item.count}}" min='1'/>
+          <button type="submit">Update</button>
+        </form>
+      </td>
+      <td>{{item.price}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  <div class="total-price">
+    <table>
+      <tr>
+        <td>Subtotal</td>
+        <td id = 'subTotal'>{{subTotal}}</td>
+      </tr>
+      <tr>
+        <td>Tax</td>
+        <td id='tax' >30000</td>
+      </tr>
+      <tr>
+        <td>Total</td>
+        <td id = 'total'></td>
+      </tr>
+    </table>
+    
+  </div>
+  {% if orderItem_set.count %}
+  <div>
+    
+    <a href="{% url 'thanh-toan' %}"
+    class='btn'
+    >Thanh toán</a>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+    let subTotal = document.getElementById('subTotal')
+    let tax = document.getElementById('tax')
+    let total = document.getElementById('total')
+    total.innerHTML = parseInt(subTotal.innerHTML) + parseInt(tax.innerHTML)
+</script>
+{% endif %}
+<a href="{% url 'products-page' %}">Tiếp tục mua sắm =>></a>
+{% endblock content %}
